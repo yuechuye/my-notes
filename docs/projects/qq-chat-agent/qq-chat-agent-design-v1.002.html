@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr"><head><title>QQ 聊天代理设计文档 v1.002</title><meta charset="utf-8"/><link rel="preload" href="../../index.css" as="style"/><link rel="preload" href="../../prescript.js" as="script"/><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted Grotesk:wght@400;700&amp;family=Source Sans Pro:ital,wght@0,400;0,600;1,400;1,600&amp;family=IBM Plex Mono:wght@400;600&amp;display=swap"/><link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin="anonymous"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="og:site_name" content="📝 我的知识库"/><meta property="og:title" content="QQ 聊天代理设计文档 v1.002"/><meta property="og:type" content="website"/><meta name="twitter:card" content="summary_large_image"/><meta name="twitter:title" content="QQ 聊天代理设计文档 v1.002"/><meta name="twitter:description" content="QQ 聊天代理设计文档 v1.002 Abstract 本文档定义 QQ 聊天代理的一期 MVP 设计。系统运行在 Codex 中，面向单一用户，所有数据仅保存在本地，先接入 QQ，支持 $chat 本人直发和 $qchat 代理聊天两种入口，并在高风险或不确定场景下进入暂停确认态。 1."/><meta property="og:description" content="QQ 聊天代理设计文档 v1.002 Abstract 本文档定义 QQ 聊天代理的一期 MVP 设计。系统运行在 Codex 中，面向单一用户，所有数据仅保存在本地，先接入 QQ，支持 $chat 本人直发和 $qchat 代理聊天两种入口，并在高风险或不确定场景下进入暂停确认态。 1."/><meta property="og:image:alt" content="QQ 聊天代理设计文档 v1.002 Abstract 本文档定义 QQ 聊天代理的一期 MVP 设计。系统运行在 Codex 中，面向单一用户，所有数据仅保存在本地，先接入 QQ，支持 $chat 本人直发和 $qchat 代理聊天两种入口，并在高风险或不确定场景下进入暂停确认态。 1."/><meta property="og:image" content="https://yuechuye.gitee.io/my-notes/static/og-image.png"/><meta property="og:image:url" content="https://yuechuye.gitee.io/my-notes/static/og-image.png"/><meta name="twitter:image" content="https://yuechuye.gitee.io/my-notes/static/og-image.png"/><meta property="og:image:type" content="image/.png"/><meta property="twitter:domain" content="yuechuye.gitee.io/my-notes"/><meta property="og:url" content="https://yuechuye.gitee.io/my-notes/projects/qq-chat-agent/qq-chat-agent-design-v1.002"/><meta property="twitter:url" content="https://yuechuye.gitee.io/my-notes/projects/qq-chat-agent/qq-chat-agent-design-v1.002"/><link rel="icon" href="../../static/icon.png"/><meta name="description" content="QQ 聊天代理设计文档 v1.002 Abstract 本文档定义 QQ 聊天代理的一期 MVP 设计。系统运行在 Codex 中，面向单一用户，所有数据仅保存在本地，先接入 QQ，支持 $chat 本人直发和 $qchat 代理聊天两种入口，并在高风险或不确定场景下进入暂停确认态。 1."/><meta name="generator" content="Quartz"/><link href="../../index.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-735924e0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-589c1cea.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-bbc3f7c0.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-2911f5d1.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-7f220492.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-e427079e.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-53b25b2b.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-c93c6a44.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-8a06014f.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-77d6a441.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-6ee21cee.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-1ea6ad18.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-34bdfded.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-788c9ca3.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-caf7c009.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-642859cd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-4abc06bd.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-274a3dfe.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-94cb6c84.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-58d5ff56.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../component-7262b5a7.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-a5c806d2.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-6bd36952.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-9857b007.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="../../static/resource-style-d3a1a224.css" rel="stylesheet" type="text/css" data-persist="true"/><link href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" rel="stylesheet" type="text/css" data-persist="true"/><script src="../../prescript.js" type="application/javascript" data-persist="true"></script><script type="application/javascript" data-persist="true">const fetchData = fetch("../../static/contentIndex.json").then(data => data.json())</script><link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous"/><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted%20Grotesk%3Awght%40400%3B700&amp;family=Source%20Sans%20Pro%3Aital%2Cwght%400%2C400%3B0%2C600%3B1%2C400%3B1%2C600&amp;family=IBM%20Plex%20Mono%3Awght%40400%3B600&amp;display=swap"/></head><body data-slug="projects/qq-chat-agent/qq-chat-agent-design-v1.002" data-basepath><div id="quartz-root" class="page" data-frame="default"><div id="quartz-body"><div class="left sidebar"><h2 class="page-title"><a href="../..">📝 我的知识库</a></h2><div class="mobile-only"><div class="spacer"></div></div><div class="flex-component" style="flex-direction: row; flex-wrap: nowrap; gap: 0.5rem;"><div style="flex-grow: 1; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><div class="search"><button class="search-button" aria-label="搜索" aria-expanded="false"><svg role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9 19.7"><title>Search</title><g class="search-path" fill="none"><path stroke-linecap="square" d="M18.5 18.3l-5.4-5.4"></path><circle cx="8" cy="8" r="7"></circle></g></svg><p>搜索</p></button><div class="search-container"><div class="search-space"><input autocomplete="off" class="search-bar" name="search" type="text" aria-label="搜索内容..." placeholder="搜索内容..."/><div class="search-layout" data-preview="true" data-field-priority="[&quot;title&quot;,&quot;content&quot;,&quot;tags&quot;]"></div></div></div></div></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="darkmode" aria-label="暗色模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="dayIcon" x="0px" y="0px" viewBox="0 0 35 35" style="enable-background:new 0 0 35 35" xml:space="preserve" aria-label="暗色模式"><title>暗色模式</title><path d="M6,17.5C6,16.672,5.328,16,4.5,16h-3C0.672,16,0,16.672,0,17.5    S0.672,19,1.5,19h3C5.328,19,6,18.328,6,17.5z M7.5,26c-0.414,0-0.789,0.168-1.061,0.439l-2,2C4.168,28.711,4,29.086,4,29.5    C4,30.328,4.671,31,5.5,31c0.414,0,0.789-0.168,1.06-0.44l2-2C8.832,28.289,9,27.914,9,27.5C9,26.672,8.329,26,7.5,26z M17.5,6    C18.329,6,19,5.328,19,4.5v-3C19,0.672,18.329,0,17.5,0S16,0.672,16,1.5v3C16,5.328,16.671,6,17.5,6z M27.5,9    c0.414,0,0.789-0.168,1.06-0.439l2-2C30.832,6.289,31,5.914,31,5.5C31,4.672,30.329,4,29.5,4c-0.414,0-0.789,0.168-1.061,0.44    l-2,2C26.168,6.711,26,7.086,26,7.5C26,8.328,26.671,9,27.5,9z M6.439,8.561C6.711,8.832,7.086,9,7.5,9C8.328,9,9,8.328,9,7.5    c0-0.414-0.168-0.789-0.439-1.061l-2-2C6.289,4.168,5.914,4,5.5,4C4.672,4,4,4.672,4,5.5c0,0.414,0.168,0.789,0.439,1.06    L6.439,8.561z M33.5,16h-3c-0.828,0-1.5,0.672-1.5,1.5s0.672,1.5,1.5,1.5h3c0.828,0,1.5-0.672,1.5-1.5S34.328,16,33.5,16z     M28.561,26.439C28.289,26.168,27.914,26,27.5,26c-0.828,0-1.5,0.672-1.5,1.5c0,0.414,0.168,0.789,0.439,1.06l2,2    C28.711,30.832,29.086,31,29.5,31c0.828,0,1.5-0.672,1.5-1.5c0-0.414-0.168-0.789-0.439-1.061L28.561,26.439z M17.5,29    c-0.829,0-1.5,0.672-1.5,1.5v3c0,0.828,0.671,1.5,1.5,1.5s1.5-0.672,1.5-1.5v-3C19,29.672,18.329,29,17.5,29z M17.5,7    C11.71,7,7,11.71,7,17.5S11.71,28,17.5,28S28,23.29,28,17.5S23.29,7,17.5,7z M17.5,25c-4.136,0-7.5-3.364-7.5-7.5    c0-4.136,3.364-7.5,7.5-7.5c4.136,0,7.5,3.364,7.5,7.5C25,21.636,21.636,25,17.5,25z"></path></svg><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="nightIcon" x="0px" y="0px" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100" xml:space="preserve" aria-label="亮色模式"><title>亮色模式</title><path d="M96.76,66.458c-0.853-0.852-2.15-1.064-3.23-0.534c-6.063,2.991-12.858,4.571-19.655,4.571  C62.022,70.495,50.88,65.88,42.5,57.5C29.043,44.043,25.658,23.536,34.076,6.47c0.532-1.08,0.318-2.379-0.534-3.23  c-0.851-0.852-2.15-1.064-3.23-0.534c-4.918,2.427-9.375,5.619-13.246,9.491c-9.447,9.447-14.65,22.008-14.65,35.369  c0,13.36,5.203,25.921,14.65,35.368s22.008,14.65,35.368,14.65c13.361,0,25.921-5.203,35.369-14.65  c3.872-3.871,7.064-8.328,9.491-13.246C97.826,68.608,97.611,67.309,96.76,66.458z"></path></svg></button></div><div style="flex-grow: 0; flex-shrink: 1; flex-basis: auto; order: 0; align-self: center; justify-self: center;"><button class="readermode" aria-label="阅读模式"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" class="readerIcon" fill="currentColor" stroke="currentColor" stroke-width="0.2" stroke-linecap="round" stroke-linejoin="round" width="64px" height="64px" viewBox="0 0 24 24" aria-label="阅读模式"><title>阅读模式</title><g transform="translate(-1.8, -1.8) scale(1.15, 1.2)"><path d="M8.9891247,2.5 C10.1384702,2.5 11.2209868,2.96705384 12.0049645,3.76669482 C12.7883914,2.96705384 13.8709081,2.5 15.0202536,2.5 L18.7549359,2.5 C19.1691495,2.5 19.5049359,2.83578644 19.5049359,3.25 L19.5046891,4.004 L21.2546891,4.00457396 C21.6343849,4.00457396 21.9481801,4.28672784 21.9978425,4.6528034 L22.0046891,4.75457396 L22.0046891,20.25 C22.0046891,20.6296958 21.7225353,20.943491 21.3564597,20.9931534 L21.2546891,21 L2.75468914,21 C2.37499337,21 2.06119817,20.7178461 2.01153575,20.3517706 L2.00468914,20.25 L2.00468914,4.75457396 C2.00468914,4.37487819 2.28684302,4.061083 2.65291858,4.01142057 L2.75468914,4.00457396 L4.50368914,4.004 L4.50444233,3.25 C4.50444233,2.87030423 4.78659621,2.55650904 5.15267177,2.50684662 L5.25444233,2.5 L8.9891247,2.5 Z M4.50368914,5.504 L3.50468914,5.504 L3.50468914,19.5 L10.9478955,19.4998273 C10.4513189,18.9207296 9.73864328,18.5588115 8.96709342,18.5065584 L8.77307039,18.5 L5.25444233,18.5 C4.87474657,18.5 4.56095137,18.2178461 4.51128895,17.8517706 L4.50444233,17.75 L4.50368914,5.504 Z M19.5049359,17.75 C19.5049359,18.1642136 19.1691495,18.5 18.7549359,18.5 L15.2363079,18.5 C14.3910149,18.5 13.5994408,18.8724714 13.0614828,19.4998273 L20.5046891,19.5 L20.5046891,5.504 L19.5046891,5.504 L19.5049359,17.75 Z M18.0059359,3.999 L15.0202536,4 L14.8259077,4.00692283 C13.9889509,4.06666544 13.2254227,4.50975805 12.7549359,5.212 L12.7549359,17.777 L12.7782651,17.7601316 C13.4923805,17.2719483 14.3447024,17 15.2363079,17 L18.0059359,16.999 L18.0056891,4.798 L18.0033792,4.75457396 L18.0056891,4.71 L18.0059359,3.999 Z M8.9891247,4 L6.00368914,3.999 L6.00599909,4.75457396 L6.00599909,4.75457396 L6.00368914,4.783 L6.00368914,16.999 L8.77307039,17 C9.57551536,17 10.3461406,17.2202781 11.0128313,17.6202194 L11.2536891,17.776 L11.2536891,5.211 C10.8200889,4.56369974 10.1361548,4.13636104 9.37521067,4.02745763 L9.18347055,4.00692283 L8.9891247,4 Z"></path></g></svg></button></div></div><div class="explorer nav-files-container" data-behavior="link" data-collapsed="collapsed" data-savestate="true" data-data-fns="{&quot;order&quot;:[&quot;filter&quot;,&quot;map&quot;,&quot;sort&quot;],&quot;sortFn&quot;:&quot;(a2, b2) => {\n    if (!a2.isFolder &amp;&amp; !b2.isFolder || a2.isFolder &amp;&amp; b2.isFolder) {\n      return (a2.displayName || \&quot;\&quot;).localeCompare(b2.displayName || \&quot;\&quot;, void 0, {\n        numeric: true,\n        sensitivity: \&quot;base\&quot;\n      });\n    }\n    if (!a2.isFolder &amp;&amp; b2.isFolder) {\n      return 1;\n    }\n    return -1;\n  }&quot;,&quot;filterFn&quot;:&quot;(node) => node.slugSegment !== \&quot;tags\&quot;&quot;,&quot;mapFn&quot;:&quot;(node) => {\n    return node;\n  }&quot;}"><button type="button" class="explorer-toggle mobile-explorer hide-until-loaded" data-mobile="true" aria-controls="explorer-9" aria-label="探索"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide-menu"><line x1="4" x2="20" y1="12" y2="12"></line><line x1="4" x2="20" y1="6" y2="6"></line><line x1="4" x2="20" y1="18" y2="18"></line></svg></button><button type="button" class="title-button explorer-toggle desktop-explorer" data-mobile="false" aria-expanded="true"><h2>探索</h2><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><div id="explorer-9" class="explorer-content" aria-expanded="false" role="group"><ul class="explorer-ul overflow" id="list-0"><li class="overflow-end"></li></ul></div><template id="template-file"><li><a href="#" class="nav-file-title tree-item-self"></a></li></template><template id="template-folder"><li><div class="folder-container nav-folder-title tree-item-self"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="5 8 14 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="folder-icon nav-folder-collapse-indicator collapse-icon"><polyline points="6 9 12 15 18 9"></polyline></svg><div><button class="folder-button"><span class="folder-title"></span></button></div></div><div class="folder-outer"><ul class="content tree-item-children"></ul></div></li></template></div></div><div class="center"><div class="page-header"><div class="popover-hint"><nav class="breadcrumb-container" aria-label="breadcrumbs"><div class="breadcrumb-element"><a href="../../">Home</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../projects/">projects</a><p> ❯ </p></div><div class="breadcrumb-element"><a href="../../projects/qq-chat-agent/">qq-chat-agent</a><p> ❯ </p></div><div class="breadcrumb-element"><a href>QQ 聊天代理设计文档 v1.002</a></div></nav><h1 class="article-title">QQ 聊天代理设计文档 v1.002</h1><details class="note-properties metadata-container" open data-collapsed="false"><summary class="note-properties-header"><span class="note-properties-title">Properties</span><span class="note-properties-count">2</span></summary><table class="note-properties-table"><tbody><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">tags</td><td class="note-properties-value metadata-property-value"><span class="note-properties-tags"><a href="../../tags/codex" class="internal internal-link tag-link">codex</a><span class="note-properties-separator">, </span><a href="../../tags/qq" class="internal internal-link tag-link">qq</a><span class="note-properties-separator">, </span><a href="../../tags/chat-agent" class="internal internal-link tag-link">chat-agent</a><span class="note-properties-separator">, </span><a href="../../tags/design" class="internal internal-link tag-link">design</a><span class="note-properties-separator">, </span><a href="../../tags/mvp" class="internal internal-link tag-link">mvp</a></span></td></tr><tr class="note-properties-row metadata-property"><td class="note-properties-key metadata-property-key">aliases</td><td class="note-properties-value metadata-property-value"><span class="note-properties-list"><span class="note-properties-text">qchat 设计文档 v1.002</span><span class="note-properties-separator">, </span><span class="note-properties-text">QQ 聊天代理正式设计 v1.002</span></span></td></tr></tbody></table></details><p show-comma="true" class="content-meta"><time datetime="2026-03-31T16:00:00.000Z">2026年4月01日</time><span>11分钟阅读</span></p><ul class="tags"><li><a href="../../tags/codex" class="internal tag-link">codex</a></li><li><a href="../../tags/qq" class="internal tag-link">qq</a></li><li><a href="../../tags/chat-agent" class="internal tag-link">chat-agent</a></li><li><a href="../../tags/design" class="internal tag-link">design</a></li><li><a href="../../tags/mvp" class="internal tag-link">mvp</a></li></ul></div></div><article class="popover-hint"><div class="markdown-preview-view markdown-rendered"><h1 id="qq-聊天代理设计文档-v1002">QQ 聊天代理设计文档 v1.002<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#qq-聊天代理设计文档-v1002" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h1>
+<blockquote class="callout abstract" data-callout="abstract">
+<div class="callout-title">
+                  <div class="callout-icon"></div>
+                  <div class="callout-title-inner"><p>Abstract</p></div>
+                  
+                </div>
+<div class="callout-content">
+<p>本文档定义 QQ 聊天代理的一期 MVP 设计。系统运行在 Codex 中，面向单一用户，所有数据仅保存在本地，先接入 QQ，支持 <code>$chat</code> 本人直发和 <code>$qchat</code> 代理聊天两种入口，并在高风险或不确定场景下进入暂停确认态。</p>
+</div>
+</blockquote>
+<h2 id="1-设计目标">1. 设计目标<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#1-设计目标" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>一期要解决的是一条可用的最小闭环：</p>
+<ol>
+<li>通过别名找到联系人</li>
+<li>读取最近会话上下文</li>
+<li>按命令执行直发或代理回复</li>
+<li>在本地保存聊天记录、画像、标签和决策摘要</li>
+<li>在不确定时暂停并询问用户，而不是乱发或报错</li>
+</ol>
+<p>一期不追求完全自治，也不追求复杂前端。</p>
+<h2 id="2-非目标">2. 非目标<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#2-非目标" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>以下内容不属于一期目标：</p>
+<ul>
+<li>微信接入</li>
+<li>多平台联系人统一管理</li>
+<li>长时间无人监管的自动闲聊</li>
+<li>多轮自治策略优化</li>
+<li>复杂参数系统</li>
+<li>云同步、多人共享、服务端存储</li>
+</ul>
+<h2 id="3-产品入口">3. 产品入口<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#3-产品入口" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="31-chat">3.1 <code>$chat</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#31-chat" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$chat &lt;alias> &lt;message></span></span></code></pre></figure>
+<p>语义：</p>
+<ul>
+<li>用户已经明确要发送的文本</li>
+<li>系统不做策略生成</li>
+<li>只负责联系人解析、发送和记录</li>
+</ul>
+<p>示例：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$chat 小雨 今天天气真好</span></span>
+<span data-line><span>$chat 老王 我刚忙完，晚点聊</span></span></code></pre></figure>
+<h3 id="32-qchat">3.2 <code>$qchat</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#32-qchat" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$qchat &lt;alias> &lt;task></span></span></code></pre></figure>
+<p>语义：</p>
+<ul>
+<li>用户只提供目标，不提供最终文案</li>
+<li>系统结合上下文、画像、标签和历史摘要生成回复</li>
+<li>发送前必须经过风险判断</li>
+</ul>
+<p>示例：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>$qchat 小雨 哄好她</span></span>
+<span data-line><span>$qchat 老王 回答他刚才的问题</span></span>
+<span data-line><span>$qchat 阿明 和他闲聊</span></span>
+<span data-line><span>$qchat 小李 自然结束对话</span></span></code></pre></figure>
+<h3 id="33-暂停确认态">3.3 暂停确认态<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#33-暂停确认态" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>暂停确认态是 <code>$qchat</code> 的内建状态，不是新命令。</p>
+<p>触发后，系统返回最小必要追问，例如：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>我不确定她现在是在生气还是在开玩笑。</span></span>
+<span data-line><span>建议先确认：要偏哄一点，还是先解释？</span></span></code></pre></figure>
+<p>要求：</p>
+<ul>
+<li>不丢上下文</li>
+<li>问题尽量短</li>
+<li>用户答复后继续原任务</li>
+<li>如果用户放弃，本轮任务终止且不发送</li>
+</ul>
+<h2 id="4-联系人模型">4. 联系人模型<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#4-联系人模型" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="41-别名原则">4.1 别名原则<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#41-别名原则" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>系统不直接依赖 QQ 昵称。联系人由用户维护的别名表解析。</p>
+<p>目标：</p>
+<ul>
+<li>提高匹配稳定性</li>
+<li>避免昵称变化导致失效</li>
+<li>为后续画像和标签绑定提供固定锚点</li>
+</ul>
+<h3 id="42-contactsyaml">4.2 <code>contacts.yaml</code><a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#42-contactsyaml" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>建议文件路径：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>data/contacts.yaml</span></span></code></pre></figure>
+<p>建议结构：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">contacts</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  xiaoyu</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">    aliases</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">小雨</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">宝宝</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">    qq</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;3391855334&quot;</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">    display_name</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;小雨&quot;</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">    tags</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">可安抚</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">      - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">可闲聊</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">    notes</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;聊天整体偏轻松&quot;</span></span></code></pre></figure>
+<p>字段说明：</p>
+<ul>
+<li><code>contacts.&lt;key></code>: 内部稳定标识</li>
+<li><code>aliases</code>: 用户输入可匹配的别名集合</li>
+<li><code>qq</code>: QQ 联系人唯一标识</li>
+<li><code>display_name</code>: 默认展示名</li>
+<li><code>tags</code>: 静态标签</li>
+<li><code>notes</code>: 用户备注</li>
+</ul>
+<p>规则：</p>
+<ul>
+<li>一个 alias 在全局必须唯一</li>
+<li>匹配到多个联系人时直接报歧义，不做猜测</li>
+<li>未命中时返回明确错误</li>
+</ul>
+<h2 id="5-本地数据模型">5. 本地数据模型<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#5-本地数据模型" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>建议目录：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>data/</span></span>
+<span data-line><span>  contacts.yaml</span></span>
+<span data-line><span>  chats/</span></span>
+<span data-line><span>    3391855334.jsonl</span></span>
+<span data-line><span>  profiles/</span></span>
+<span data-line><span>    3391855334.yaml</span></span>
+<span data-line><span>  sessions/</span></span>
+<span data-line><span>    pending/</span></span>
+<span data-line><span>  decisions/</span></span>
+<span data-line><span>    2026-04-01.jsonl</span></span></code></pre></figure>
+<h3 id="51-原始聊天记录">5.1 原始聊天记录<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#51-原始聊天记录" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>路径：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>data/chats/&lt;qq>.jsonl</span></span></code></pre></figure>
+<p>记录格式：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="json" data-theme="github-light github-dark"><code data-language="json" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;ts&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;2026-04-01T15:31:00+08:00&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;role&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;friend&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;text&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;你刚才怎么不回我&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;source&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;qq&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;ts&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;2026-04-01T15:32:10+08:00&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;role&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;me&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;text&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;刚刚在忙，才看到&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;source&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;qchat&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;decision_id&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;dec_001&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span></code></pre></figure>
+<p>字段：</p>
+<ul>
+<li><code>ts</code>: 时间戳</li>
+<li><code>role</code>: <code>friend</code> / <code>me</code> / <code>system</code></li>
+<li><code>text</code>: 消息正文</li>
+<li><code>source</code>: <code>qq</code> / <code>chat</code> / <code>qchat</code></li>
+<li><code>decision_id</code>: 代理决策关联，可选</li>
+</ul>
+<h3 id="52-联系人画像">5.2 联系人画像<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#52-联系人画像" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>路径：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>data/profiles/&lt;qq>.yaml</span></span></code></pre></figure>
+<p>建议格式：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="yaml" data-theme="github-light github-dark"><code data-language="yaml" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">contact_id</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;3391855334&quot;</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">relationship</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;friend&quot;</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">tone</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  warmth</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">high</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  humor</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">medium</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  directness</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">low</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">rules</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">  - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">不要太生硬</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">  - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">可以轻松一点</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">  - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">不要主动承诺见面</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">dynamic_tags</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">  - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">最近有点情绪</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">summary</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  recent_topics</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">上周约饭</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">工作忙</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">  open_threads</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">    - </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">她在等解释</span></span>
+<span data-line><span style="--shiki-light:#22863A;--shiki-dark:#85E89D;" data-token-type="tag">updated_at</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;2026-04-01T15:30:00+08:00&quot;</span></span></code></pre></figure>
+<p>说明：</p>
+<ul>
+<li><code>rules</code> 表示可执行行为约束</li>
+<li><code>dynamic_tags</code> 表示阶段性状态</li>
+<li><code>summary</code> 用于缩短长上下文</li>
+</ul>
+<h3 id="53-决策摘要">5.3 决策摘要<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#53-决策摘要" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>路径：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>data/decisions/YYYY-MM-DD.jsonl</span></span></code></pre></figure>
+<p>示例：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="json" data-theme="github-light github-dark"><code data-language="json" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;id&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;dec_001&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;contact_id&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;3391855334&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;mode&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;qchat&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;task&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;哄好她&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;summary&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;判断对方有轻微不满，先解释再安抚&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;risk&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;low&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">&quot;sent&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">:</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="value">true</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span></code></pre></figure>
+<p>作用：</p>
+<ul>
+<li>追踪为什么这样回复</li>
+<li>支持后续复盘和调优</li>
+<li>给画像更新提供依据</li>
+</ul>
+<h3 id="54-暂停态会话">5.4 暂停态会话<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#54-暂停态会话" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>路径：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>data/sessions/pending/&lt;session_id>.json</span></span></code></pre></figure>
+<p>示例：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="json" data-theme="github-light github-dark"><code data-language="json" data-theme="github-light github-dark" style="display:grid;"><span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">{</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">  &quot;session_id&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;pending_001&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">  &quot;contact_id&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;3391855334&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">  &quot;mode&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;qchat&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">  &quot;task&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;哄好她&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">  &quot;question&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;要偏哄一点，还是先解释？&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">  &quot;draft&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;抱歉刚刚没及时回你，不是故意晾着你。&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">,</span></span>
+<span data-line><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;" data-token-type="punctuation">  &quot;created_at&quot;</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">: </span><span style="--shiki-light:#032F62;--shiki-dark:#9ECBFF;" data-token-type="string">&quot;2026-04-01T15:40:00+08:00&quot;</span></span>
+<span data-line><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;" data-token-type="punctuation">}</span></span></code></pre></figure>
+<p>作用：</p>
+<ul>
+<li>暂存未完成任务</li>
+<li>支持用户补充后继续执行</li>
+<li>防止状态丢失</li>
+</ul>
+<h2 id="6-系统模块划分">6. 系统模块划分<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#6-系统模块划分" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="61-alias-resolver">6.1 Alias Resolver<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#61-alias-resolver" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>职责：</p>
+<ul>
+<li>读取 <code>contacts.yaml</code></li>
+<li>做 alias 到 <code>qq</code> 的解析</li>
+<li>检查歧义和不存在情况</li>
+</ul>
+<p>输入：alias
+输出：<code>contact_id</code>, <code>qq</code>, <code>display_name</code></p>
+<h3 id="62-qq-adapter">6.2 QQ Adapter<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#62-qq-adapter" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>职责：</p>
+<ul>
+<li>发送消息</li>
+<li>拉取最近消息</li>
+<li>接收新消息事件</li>
+</ul>
+<p>要求：</p>
+<ul>
+<li>封装具体第三方接入细节</li>
+<li>对上层暴露统一接口</li>
+<li>失败时给出明确错误</li>
+</ul>
+<h3 id="63-context-loader">6.3 Context Loader<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#63-context-loader" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>职责：</p>
+<ul>
+<li>读取最近 N 条会话</li>
+<li>读取 profile 和动态标签</li>
+<li>读取最近决策摘要</li>
+<li>组装成代理可用上下文</li>
+</ul>
+<h3 id="64-agent-engine">6.4 Agent Engine<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#64-agent-engine" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>职责：</p>
+<ul>
+<li>处理 <code>$qchat</code></li>
+<li>按任务目标生成回复</li>
+<li>判断是否可直接发送</li>
+<li>决定进入发送态还是暂停态</li>
+</ul>
+<h3 id="65-message-sender">6.5 Message Sender<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#65-message-sender" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>职责：</p>
+<ul>
+<li>执行统一发送逻辑</li>
+<li><code>$chat</code> / <code>$qchat</code> 共用</li>
+<li>发送后写聊天记录</li>
+</ul>
+<h3 id="66-memory-store">6.6 Memory Store<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#66-memory-store" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>职责：</p>
+<ul>
+<li>读写 chats / profiles / decisions / sessions</li>
+<li>保证结构稳定</li>
+<li>提供最小一致性约束</li>
+</ul>
+<h2 id="7-执行流程">7. 执行流程<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#7-执行流程" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="71-chat-状态机">7.1 <code>$chat</code> 状态机<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#71-chat-状态机" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>接收命令</span></span>
+<span data-line><span>-> 解析 alias</span></span>
+<span data-line><span>-> 查到 contact</span></span>
+<span data-line><span>-> 调用 QQ Adapter 发送</span></span>
+<span data-line><span>-> 写 chats 记录</span></span>
+<span data-line><span>-> 完成</span></span></code></pre></figure>
+<p>失败分支：</p>
+<ul>
+<li>alias 未命中</li>
+<li>alias 歧义</li>
+<li>QQ 发送失败</li>
+</ul>
+<h3 id="72-qchat-状态机">7.2 <code>$qchat</code> 状态机<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#72-qchat-状态机" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>接收命令</span></span>
+<span data-line><span>-> 解析 alias</span></span>
+<span data-line><span>-> 加载上下文</span></span>
+<span data-line><span>-> 生成回复</span></span>
+<span data-line><span>-> 风险判断</span></span>
+<span data-line><span>-> 可发送 -> 发送 -> 写 chats/decisions -> 更新 profile</span></span>
+<span data-line><span>-> 不可发送 -> 创建 pending session -> 返回追问 -> 等待用户补充 -> 恢复执行</span></span></code></pre></figure>
+<h3 id="73-恢复执行">7.3 恢复执行<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#73-恢复执行" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>当用户回答暂停问题后：</p>
+<figure data-rehype-pretty-code-figure><pre tabindex="0" data-language="text" data-theme="github-light github-dark"><code data-language="text" data-theme="github-light github-dark" style="display:grid;"><span data-line><span>读取 pending session</span></span>
+<span data-line><span>-> 合并用户补充</span></span>
+<span data-line><span>-> 重新生成/修订回复</span></span>
+<span data-line><span>-> 再次风险判断</span></span>
+<span data-line><span>-> 发送或继续暂停</span></span></code></pre></figure>
+<h2 id="8-风险控制">8. 风险控制<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#8-风险控制" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<h3 id="81-系统级硬约束">8.1 系统级硬约束<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#81-系统级硬约束" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<p>一期固定启用：</p>
+<ul>
+<li>不侮辱用户</li>
+<li>不损害用户名誉</li>
+<li>不擅自作出高风险承诺</li>
+</ul>
+<h3 id="82-必须暂停的情况">8.2 必须暂停的情况<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#82-必须暂停的情况" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>系统对上下文理解不确定</li>
+<li>无法判断对方情绪</li>
+<li>涉及承诺</li>
+<li>涉及金钱</li>
+<li>涉及见面安排</li>
+<li>涉及争吵升级</li>
+<li>可能损害用户形象或名誉</li>
+<li>联系人标签和当前策略冲突</li>
+</ul>
+<h3 id="83-可直接发送的情况">8.3 可直接发送的情况<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#83-可直接发送的情况" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h3>
+<ul>
+<li>低风险日常闲聊</li>
+<li>问答明确且上下文充分</li>
+<li>任务目标简单</li>
+<li>联系人画像和动态标签支持当前表达方向</li>
+</ul>
+<h2 id="9-标签更新策略">9. 标签更新策略<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#9-标签更新策略" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>标签支持两种来源：</p>
+<ul>
+<li>系统自动生成</li>
+<li>用户手动补充或修正</li>
+</ul>
+<p>一期原则：</p>
+<ul>
+<li>系统可写入建议型动态标签</li>
+<li>命中高不确定度时应先询问再落标签</li>
+<li>静态规则标签优先级高于动态标签</li>
+</ul>
+<p>示例：</p>
+<ul>
+<li>静态：<code>不能太主动</code></li>
+<li>动态：<code>最近在生气</code></li>
+</ul>
+<h2 id="10-实现顺序">10. 实现顺序<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#10-实现顺序" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>建议按以下顺序推进：</p>
+<ol>
+<li>建立本地数据目录和 schema</li>
+<li>实现 <code>contacts.yaml</code> 与 alias resolver</li>
+<li>实现 QQ adapter 最小收发接口</li>
+<li>打通 <code>$chat</code> 全链路</li>
+<li>实现 context loader</li>
+<li>实现 <code>$qchat</code> 基础生成与发送</li>
+<li>实现暂停确认态</li>
+<li>实现决策摘要与动态标签更新</li>
+</ol>
+<p>这样做的原因：</p>
+<ul>
+<li><code>$chat</code> 是最短闭环，先验证接入层可靠性</li>
+<li><code>$qchat</code> 依赖上下文和风控，适合第二阶段接入</li>
+<li>暂停态是代理模式可用性的底线，不应该最后补</li>
+</ul>
+<h2 id="11-成功标准">11. 成功标准<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#11-成功标准" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>MVP 达标条件：</p>
+<ul>
+<li><code>$chat</code> 能稳定通过别名发送消息</li>
+<li><code>$qchat</code> 能读取最近上下文并生成合理回复</li>
+<li>高风险或不确定时不会乱发，而会暂停询问</li>
+<li>所有数据仅保存在本地</li>
+<li>修改 <code>contacts.yaml</code> 和 profile 文件后，系统行为能随之变化</li>
+</ul>
+<h2 id="12-已知风险">12. 已知风险<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#12-已知风险" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<ul>
+<li>QQ 接入层依赖非官方生态，稳定性存在不确定性</li>
+<li>动态标签如果更新过度，可能学偏</li>
+<li>暂停态如果设计太频繁，会影响使用流畅度</li>
+<li>只靠最近上下文，可能无法覆盖长期关系细节</li>
+</ul>
+<h2 id="13-下一步">13. 下一步<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#13-下一步" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>正式设计之后，下一步不再补概念，而是进入原型实现：</p>
+<ol>
+<li>创建项目内原型目录</li>
+<li>落数据目录与 schema</li>
+<li>先实现 <code>$chat</code></li>
+<li>再实现 <code>$qchat</code> 和暂停态</li>
+</ol>
+<h2 id="备注">备注<a role="anchor" aria-hidden="true" tabindex="-1" data-no-popover="true" href="#备注" class="internal internal-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg></a></h2>
+<p>本文档是正式设计版 v1.002，基于 2026-04-01 的需求确认整理，可作为原型开发基线。</p></div></article><hr/><div class="page-footer"></div></div><div class="right sidebar"><div class="graph"><h3>关系图谱</h3><div class="graph-outer"><div class="graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:1,&quot;scale&quot;:1.1,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.3,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:false,&quot;enableRadial&quot;:false}"></div><button class="global-graph-icon" aria-label="Global Graph"><svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 55 55" fill="currentColor" xml:space="preserve"><path d="M49,0c-3.309,0-6,2.691-6,6c0,1.035,0.263,2.009,0.726,2.86l-9.829,9.829C32.542,17.634,30.846,17,29,17
+                s-3.542,0.634-4.898,1.688l-7.669-7.669C16.785,10.424,17,9.74,17,9c0-2.206-1.794-4-4-4S9,6.794,9,9s1.794,4,4,4
+                c0.74,0,1.424-0.215,2.019-0.567l7.669,7.669C21.634,21.458,21,23.154,21,25s0.634,3.542,1.688,4.897L10.024,42.562
+                C8.958,41.595,7.549,41,6,41c-3.309,0-6,2.691-6,6s2.691,6,6,6s6-2.691,6-6c0-1.035-0.263-2.009-0.726-2.86l12.829-12.829
+                c1.106,0.86,2.44,1.436,3.898,1.619v10.16c-2.833,0.478-5,2.942-5,5.91c0,3.309,2.691,6,6,6s6-2.691,6-6c0-2.967-2.167-5.431-5-5.91
+                v-10.16c1.458-0.183,2.792-0.759,3.898-1.619l7.669,7.669C41.215,39.576,41,40.26,41,41c0,2.206,1.794,4,4,4s4-1.794,4-4
+                s-1.794-4-4-4c-0.74,0-1.424,0.215-2.019,0.567l-7.669-7.669C36.366,28.542,37,26.846,37,25s-0.634-3.542-1.688-4.897l9.665-9.665
+                C46.042,11.405,47.451,12,49,12c3.309,0,6-2.691,6-6S52.309,0,49,0z M11,9c0-1.103,0.897-2,2-2s2,0.897,2,2s-0.897,2-2,2
+                S11,10.103,11,9z M6,51c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S8.206,51,6,51z M33,49c0,2.206-1.794,4-4,4s-4-1.794-4-4
+                s1.794-4,4-4S33,46.794,33,49z M29,31c-3.309,0-6-2.691-6-6s2.691-6,6-6s6,2.691,6,6S32.309,31,29,31z M47,41c0,1.103-0.897,2-2,2
+                s-2-0.897-2-2s0.897-2,2-2S47,39.897,47,41z M49,10c-2.206,0-4-1.794-4-4s1.794-4,4-4s4,1.794,4,4S51.206,10,49,10z"></path></svg></button></div><div class="global-graph-outer"><div class="global-graph-container" data-cfg="{&quot;drag&quot;:true,&quot;zoom&quot;:true,&quot;depth&quot;:-1,&quot;scale&quot;:0.9,&quot;repelForce&quot;:0.5,&quot;centerForce&quot;:0.2,&quot;linkDistance&quot;:30,&quot;fontSize&quot;:0.6,&quot;opacityScale&quot;:1,&quot;showTags&quot;:true,&quot;removeTags&quot;:[],&quot;focusOnHover&quot;:true,&quot;enableRadial&quot;:true}"></div></div></div><div class="toc"><button type="button" class="toc-header" aria-controls="toc-9" aria-expanded="true"><h3>目录</h3><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="fold"><polyline points="6 9 12 15 18 9"></polyline></svg></button><ul id="list-0" class="toc-content overflow"><li class="depth-0"><a href="#qq-聊天代理设计文档-v1002" data-for="qq-聊天代理设计文档-v1002">QQ 聊天代理设计文档 v1.002</a></li><li class="depth-1"><a href="#1-设计目标" data-for="1-设计目标">1. 设计目标</a></li><li class="depth-1"><a href="#2-非目标" data-for="2-非目标">2. 非目标</a></li><li class="depth-1"><a href="#3-产品入口" data-for="3-产品入口">3. 产品入口</a></li><li class="depth-2"><a href="#31-chat" data-for="31-chat">3.1 $chat</a></li><li class="depth-2"><a href="#32-qchat" data-for="32-qchat">3.2 $qchat</a></li><li class="depth-2"><a href="#33-暂停确认态" data-for="33-暂停确认态">3.3 暂停确认态</a></li><li class="depth-1"><a href="#4-联系人模型" data-for="4-联系人模型">4. 联系人模型</a></li><li class="depth-2"><a href="#41-别名原则" data-for="41-别名原则">4.1 别名原则</a></li><li class="depth-2"><a href="#42-contactsyaml" data-for="42-contactsyaml">4.2 contacts.yaml</a></li><li class="depth-1"><a href="#5-本地数据模型" data-for="5-本地数据模型">5. 本地数据模型</a></li><li class="depth-2"><a href="#51-原始聊天记录" data-for="51-原始聊天记录">5.1 原始聊天记录</a></li><li class="depth-2"><a href="#52-联系人画像" data-for="52-联系人画像">5.2 联系人画像</a></li><li class="depth-2"><a href="#53-决策摘要" data-for="53-决策摘要">5.3 决策摘要</a></li><li class="depth-2"><a href="#54-暂停态会话" data-for="54-暂停态会话">5.4 暂停态会话</a></li><li class="depth-1"><a href="#6-系统模块划分" data-for="6-系统模块划分">6. 系统模块划分</a></li><li class="depth-2"><a href="#61-alias-resolver" data-for="61-alias-resolver">6.1 Alias Resolver</a></li><li class="depth-2"><a href="#62-qq-adapter" data-for="62-qq-adapter">6.2 QQ Adapter</a></li><li class="depth-2"><a href="#63-context-loader" data-for="63-context-loader">6.3 Context Loader</a></li><li class="depth-2"><a href="#64-agent-engine" data-for="64-agent-engine">6.4 Agent Engine</a></li><li class="depth-2"><a href="#65-message-sender" data-for="65-message-sender">6.5 Message Sender</a></li><li class="depth-2"><a href="#66-memory-store" data-for="66-memory-store">6.6 Memory Store</a></li><li class="depth-1"><a href="#7-执行流程" data-for="7-执行流程">7. 执行流程</a></li><li class="depth-2"><a href="#71-chat-状态机" data-for="71-chat-状态机">7.1 $chat 状态机</a></li><li class="depth-2"><a href="#72-qchat-状态机" data-for="72-qchat-状态机">7.2 $qchat 状态机</a></li><li class="depth-2"><a href="#73-恢复执行" data-for="73-恢复执行">7.3 恢复执行</a></li><li class="depth-1"><a href="#8-风险控制" data-for="8-风险控制">8. 风险控制</a></li><li class="depth-2"><a href="#81-系统级硬约束" data-for="81-系统级硬约束">8.1 系统级硬约束</a></li><li class="depth-2"><a href="#82-必须暂停的情况" data-for="82-必须暂停的情况">8.2 必须暂停的情况</a></li><li class="depth-2"><a href="#83-可直接发送的情况" data-for="83-可直接发送的情况">8.3 可直接发送的情况</a></li><li class="depth-1"><a href="#9-标签更新策略" data-for="9-标签更新策略">9. 标签更新策略</a></li><li class="depth-1"><a href="#10-实现顺序" data-for="10-实现顺序">10. 实现顺序</a></li><li class="depth-1"><a href="#11-成功标准" data-for="11-成功标准">11. 成功标准</a></li><li class="depth-1"><a href="#12-已知风险" data-for="12-已知风险">12. 已知风险</a></li><li class="depth-1"><a href="#13-下一步" data-for="13-下一步">13. 下一步</a></li><li class="depth-1"><a href="#备注" data-for="备注">备注</a></li><li class="overflow-end"></li></ul></div><div class="recent-notes"><h3>最近的笔记</h3><ul class="recent-ul"><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../../projects/frameorder/v1-system-analysis" class="internal">v1-system-analysis</a></h3></div><p class="meta"><time datetime="2026-04-07T03:21:45.811Z">2026年4月07日</time></p><ul class="tags"></ul></div></li><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../../projects/frameorder/product" class="internal">product</a></h3></div><p class="meta"><time datetime="2026-04-07T03:16:30.770Z">2026年4月07日</time></p><ul class="tags"></ul></div></li><li class="recent-li"><div class="section"><div class="desc"><h3><a href="../../" class="internal">笔记导航</a></h3></div><p class="meta"><time datetime="2026-04-06T16:00:00.000Z">2026年4月07日</time></p><ul class="tags"><li><a class="internal tag-link" href="../../tags/note">note</a></li><li><a class="internal tag-link" href="../../tags/">index</a></li></ul></div></li></ul></div></div><footer class><p>Created with <a href="https://quartz.jzhao.xyz/">Quartz v1.0.0</a> © 2026</p><ul><li><a href="https://gitee.com/yuechuye/my-notes">GitHub</a></li><li><a href="https://quartz.jzhao.xyz">由 Quartz 驱动</a></li></ul></footer></div></div></body><script src="../../static/resource-after-e13fffa1.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-8b336f9a.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-baba652b.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-5eb75950.js" type="module" data-persist="true"></script><script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.min.js" type="application/javascript" data-persist="true"></script><script src="../../static/resource-after-683f275d.js" type="application/javascript" data-persist="true"></script><script src="../../postscript.js" type="module" data-persist="true"></script></html>

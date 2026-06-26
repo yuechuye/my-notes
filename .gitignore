@@ -9,10 +9,11 @@ Thumbs.db
 
 # Quartz
 node_modules/
-.cache/
+.quartz-cache/
+public/
 
-# 构建输出（Quartz 会生成到 docs/）
-docs/
+# Community plugins (reinstalled via quartz.lock.json)
+.quartz/plugins/
 
 # 临时文件
 *.tmp
