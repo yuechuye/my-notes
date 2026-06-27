@@ -6,7 +6,7 @@ configuration:
   enablePopovers: true
   analytics: null
   locale: zh-CN
-  baseUrl: yuechuye.gitee.io/my-notes
+  baseUrl: yuechuye.github.io/my-notes
   ignorePatterns:
     - .git
     - .obsidian
@@ -262,7 +262,7 @@ plugins:
     enabled: true
     options:
       links:
-        GitHub: https://gitee.com/yuechuye/my-notes
+        GitHub: https://github.com/yuechuye/my-notes
         "由 Quartz 驱动": https://quartz.jzhao.xyz
 
   - source: github:quartz-community/recent-notes
