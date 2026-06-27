@@ -1,5 +1,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml"><url>
+    <loc>https://yuechuye.github.io/my-notes/daily/2026-06-27</loc>
+    <lastmod>2026-06-26T16:00:00.000Z</lastmod>
+  </url><url>
     <loc>https://yuechuye.github.io/my-notes/guides/%E7%9F%A5%E8%AF%86%E5%BA%93%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97</loc>
+    <lastmod>2026-06-26T16:00:00.000Z</lastmod>
+  </url><url>
+    <loc>https://yuechuye.github.io/my-notes/inbox/2026-06-27</loc>
     <lastmod>2026-06-26T16:00:00.000Z</lastmod>
   </url><url>
     <loc>https://yuechuye.github.io/my-notes/</loc>
@@ -8,21 +14,33 @@
     <loc>https://yuechuye.github.io/my-notes/timeline</loc>
     <lastmod>2026-06-26T16:00:00.000Z</lastmod>
   </url><url>
+    <loc>https://yuechuye.github.io/my-notes/daily/</loc>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
+  </url><url>
     <loc>https://yuechuye.github.io/my-notes/guides/</loc>
-    <lastmod>2026-06-27T05:58:26.510Z</lastmod>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
+  </url><url>
+    <loc>https://yuechuye.github.io/my-notes/inbox/</loc>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
+  </url><url>
+    <loc>https://yuechuye.github.io/my-notes/tags/daily</loc>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
   </url><url>
     <loc>https://yuechuye.github.io/my-notes/tags/guide</loc>
-    <lastmod>2026-06-27T05:58:26.510Z</lastmod>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
   </url><url>
     <loc>https://yuechuye.github.io/my-notes/tags/tutorial</loc>
-    <lastmod>2026-06-27T05:58:26.510Z</lastmod>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
+  </url><url>
+    <loc>https://yuechuye.github.io/my-notes/tags/capture</loc>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
   </url><url>
     <loc>https://yuechuye.github.io/my-notes/tags/note</loc>
-    <lastmod>2026-06-27T05:58:26.510Z</lastmod>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
   </url><url>
     <loc>https://yuechuye.github.io/my-notes/tags/</loc>
-    <lastmod>2026-06-27T05:58:26.510Z</lastmod>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
   </url><url>
     <loc>https://yuechuye.github.io/my-notes/tags/timeline</loc>
-    <lastmod>2026-06-27T05:58:26.510Z</lastmod>
+    <lastmod>2026-06-27T06:05:33.588Z</lastmod>
   </url></urlset>
