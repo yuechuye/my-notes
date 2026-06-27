@@ -6,65 +6,59 @@
       <description>Last 10 notes on 📝 我的知识库</description>
       <generator>Quartz -- quartz.jzhao.xyz</generator>
       <item>
-    <title>codex</title>
-    <link>https://yuechuye.github.io/my-notes/codex/</link>
-    <guid>https://yuechuye.github.io/my-notes/codex/</guid>
-    <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
-  </item><item>
     <title>guides</title>
     <link>https://yuechuye.github.io/my-notes/guides/</link>
     <guid>https://yuechuye.github.io/my-notes/guides/</guid>
     <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
+    <pubDate>Sat, 27 Jun 2026 05:55:18 GMT</pubDate>
   </item><item>
-    <title>FrameOrder</title>
-    <link>https://yuechuye.github.io/my-notes/projects/frameorder/</link>
-    <guid>https://yuechuye.github.io/my-notes/projects/frameorder/</guid>
+    <title>guide</title>
+    <link>https://yuechuye.github.io/my-notes/tags/guide</link>
+    <guid>https://yuechuye.github.io/my-notes/tags/guide</guid>
     <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
+    <pubDate>Sat, 27 Jun 2026 05:55:18 GMT</pubDate>
   </item><item>
-    <title>projects</title>
-    <link>https://yuechuye.github.io/my-notes/projects/</link>
-    <guid>https://yuechuye.github.io/my-notes/projects/</guid>
+    <title>tutorial</title>
+    <link>https://yuechuye.github.io/my-notes/tags/tutorial</link>
+    <guid>https://yuechuye.github.io/my-notes/tags/tutorial</guid>
     <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
+    <pubDate>Sat, 27 Jun 2026 05:55:18 GMT</pubDate>
   </item><item>
-    <title>qq-chat-agent</title>
-    <link>https://yuechuye.github.io/my-notes/projects/qq-chat-agent/</link>
-    <guid>https://yuechuye.github.io/my-notes/projects/qq-chat-agent/</guid>
+    <title>note</title>
+    <link>https://yuechuye.github.io/my-notes/tags/note</link>
+    <guid>https://yuechuye.github.io/my-notes/tags/note</guid>
     <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
+    <pubDate>Sat, 27 Jun 2026 05:55:18 GMT</pubDate>
   </item><item>
-    <title>weekly</title>
-    <link>https://yuechuye.github.io/my-notes/weekly/</link>
-    <guid>https://yuechuye.github.io/my-notes/weekly/</guid>
+    <title>标签索引</title>
+    <link>https://yuechuye.github.io/my-notes/tags/</link>
+    <guid>https://yuechuye.github.io/my-notes/tags/</guid>
     <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
+    <pubDate>Sat, 27 Jun 2026 05:55:18 GMT</pubDate>
   </item><item>
-    <title>codex</title>
-    <link>https://yuechuye.github.io/my-notes/tags/codex</link>
-    <guid>https://yuechuye.github.io/my-notes/tags/codex</guid>
+    <title>timeline</title>
+    <link>https://yuechuye.github.io/my-notes/tags/timeline</link>
+    <guid>https://yuechuye.github.io/my-notes/tags/timeline</guid>
     <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
+    <pubDate>Sat, 27 Jun 2026 05:55:18 GMT</pubDate>
   </item><item>
-    <title>skills</title>
-    <link>https://yuechuye.github.io/my-notes/tags/skills</link>
-    <guid>https://yuechuye.github.io/my-notes/tags/skills</guid>
-    <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
+    <title>知识库使用指南</title>
+    <link>https://yuechuye.github.io/my-notes/guides/%E7%9F%A5%E8%AF%86%E5%BA%93%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97</link>
+    <guid>https://yuechuye.github.io/my-notes/guides/%E7%9F%A5%E8%AF%86%E5%BA%93%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97</guid>
+    <description><![CDATA[ 知识库使用指南 CLI 命令速查 note capture &quot;突然的想法&quot; # 快速捕获碎片 → inbox/ note daily # 今日日常记录 → daily/ note new learning &quot;Rust 所有权&quot; # 新建学习笔记 → notes/learning/ note new idea &quot;一个点子&quot; # 新建想法笔记 → notes/ideas/ note new project &quot;项目名&quot; # 新建项目设计 → projects/&lt;名&gt;/ note weekly # 写周报 → ... ]]></description>
+    <pubDate>Fri, 26 Jun 2026 16:00:00 GMT</pubDate>
   </item><item>
-    <title>mcp</title>
-    <link>https://yuechuye.github.io/my-notes/tags/mcp</link>
-    <guid>https://yuechuye.github.io/my-notes/tags/mcp</guid>
-    <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
+    <title>笔记导航</title>
+    <link>https://yuechuye.github.io/my-notes/</link>
+    <guid>https://yuechuye.github.io/my-notes/</guid>
+    <description><![CDATA[ 📝 我的知识库 学习笔记、项目设计、灵感碎片——写作即思考。 快速入口 🕐 时间线 — 按时间浏览所有笔记 📖 使用指南 — 怎么用这个知识库 按类型浏览 📚 学习笔记 学完、读完后的总结输出。用自己的话复述。 💡 想法 从模糊点子到成型想法。先写下来，再整理。 🚧 项目 正在做或打算做的项目，方案与复盘。 📊 周报 每周回顾：做了什么、学到什么、卡在哪。 写作规则 你的状态放这里💭 模糊想法，一两句话inbox/📅 今天做了什么daily/🎓 学完一个东西想整理notes/learning/✨ 有个想法想展开notes/ideas/🏗️ 开始一个新项目projects/... ]]></description>
+    <pubDate>Fri, 26 Jun 2026 16:00:00 GMT</pubDate>
   </item><item>
-    <title>serena</title>
-    <link>https://yuechuye.github.io/my-notes/tags/serena</link>
-    <guid>https://yuechuye.github.io/my-notes/tags/serena</guid>
-    <description><![CDATA[  ]]></description>
-    <pubDate>Sat, 27 Jun 2026 05:49:39 GMT</pubDate>
+    <title>时间线</title>
+    <link>https://yuechuye.github.io/my-notes/timeline</link>
+    <guid>https://yuechuye.github.io/my-notes/timeline</guid>
+    <description><![CDATA[ 时间线 按时间倒序展示所有笔记。由 note timeline 自动生成。 2026 2026年06月 2026-06-27 — 知识库使用指南 2026-06-27 — 笔记导航 . ]]></description>
+    <pubDate>Fri, 26 Jun 2026 16:00:00 GMT</pubDate>
   </item>
     </channel>
   </rss>
