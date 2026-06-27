@@ -179,6 +179,9 @@ plugins:
   # ---------- Layout Components ----------
   - source: github:quartz-community/explorer
     enabled: true
+    options:
+      folderClickBehavior: link
+      filterFn: "(node) => node.name !== 'templates' && node.name !== 'archive' && node.name !== '.gitkeep' && node.name !== '.obsidian' && node.name !== '.git'"
     layout:
       position: left
       priority: 50
