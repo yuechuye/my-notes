@@ -40,7 +40,6 @@ export const sharedPageComponents: SharedLayout = {
   beforeBody: [
     Component.Breadcrumbs(),
     Component.Search(),
-    Component.TagList(),
   ],
   left: [
     Component.DesktopOnly(Component.Explorer({
@@ -61,7 +60,6 @@ export const defaultContentPageLayout: PageLayout = {
     Component.Breadcrumbs(),
     Component.ArticleTitle(),
     Component.ContentMeta(),
-    Component.TagList(),
   ],
   afterBody: [],
   left: [
