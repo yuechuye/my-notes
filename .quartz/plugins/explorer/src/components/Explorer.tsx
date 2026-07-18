@@ -108,7 +108,7 @@ export default ((userOpts?: Partial<ExplorerOptions>) => {
           </svg>
         </button>
         <div class="explorer-toolbar">
-          <h2>{title}</h2>
+          <span class="explorer-title">{title}</span>
           <button type="button" class="new-note-button" aria-label="新建笔记">
             <svg
               xmlns="http://www.w3.org/2000/svg"
