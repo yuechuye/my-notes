@@ -432,11 +432,21 @@ function setupNewNoteButton(explorer) {
   if (!panelTemplate) return
 
   let activePanel = null
+  let escHandler = null
+  let closeHandler = null
 
   function closePanel() {
     if (activePanel) {
       activePanel.remove()
       activePanel = null
+    }
+    if (escHandler) {
+      document.removeEventListener("keydown", escHandler)
+      escHandler = null
+    }
+    if (closeHandler) {
+      document.removeEventListener("click", closeHandler)
+      closeHandler = null
     }
   }
 
@@ -457,20 +467,23 @@ function setupNewNoteButton(explorer) {
     document.body.appendChild(panel)
     activePanel = panel
 
+    // ESC key closes panel
+    escHandler = function (e) {
+      if (e.key === "Escape") {
+        closePanel()
+      }
+    }
+    document.addEventListener("keydown", escHandler)
+
+    // Click outside closes panel (deferred to avoid self-trigger)
     setTimeout(() => {
-      document.addEventListener("click", function closeHandler(ev) {
+      closeHandler = function (ev) {
         if (activePanel && !activePanel.contains(ev.target) && ev.target !== newButton) {
           closePanel()
-          document.removeEventListener("click", closeHandler)
         }
-      })
+      }
+      document.addEventListener("click", closeHandler)
     }, 0)
-  })
-
-  document.addEventListener("keydown", function escHandler(e) {
-    if (e.key === "Escape" && activePanel) {
-      closePanel()
-    }
   })
 }
 
