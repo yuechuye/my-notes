@@ -324,7 +324,7 @@ var vi_VN_default = {
 var zh_CN_default = {
   components: {
     explorer: {
-      title: "\u63A2\u7D22"
+      title: "\u76EE\u5F55"
     }
   }
 };
