@@ -1,7 +1,7 @@
 ---
 title: 时间线
 tags: [timeline, index]
-created: 2026-06-27
+created: 2026-07-18
 status: evergreen
 ---
 
@@ -10,6 +10,10 @@ status: evergreen
 > 按时间倒序展示所有笔记。由 `note timeline` 自动生成。
 
 ## 2026
+
+### 2026年07月
+
+- 2026-07-18 — [[inbox/2026-07-18|2026-07-18]]
 
 ### 2026年06月
 
